@@ -1,138 +1,118 @@
-'''
-My module
-'''
-class LogisticSystem:
-    '''
-    logistic system
-    '''
-    def __init__(self, vehicles: list):
-        '''
-        main atributes
-        '''
-        self.vehicles = vehicles
-        self.list_of_orders = [41241241, 4124351224, 855488695]
-    def placeOrder(self, order):
-        '''
-        Check if vehicles are free
-        '''
-        self.order = order
-        numb_of_vehicles = len(self.vehicles)
-        if numb_of_vehicles < 1:
-            return print('There is no available vehicles')
-        else:
-            self.vehicles.pop(0)
-            return self.order, len(self.vehicles)
+import datetime
+import sys
+last_id = 0
 
-    def trackOrder(self, orderld, order, my_items):
-        '''
-        return info about your order
-        '''
-        self.orderld = orderld
-        if self.orderld not in self.list_of_orders:
-            return 'No such order'
-        else:
-            return f"Your order #{self.orderld} is sent to {order.location.city}. Total price: {order.calculateAmount(my_items)} UAH."
+class Menu:
+    '''Display a menu and respond to choices when run.'''
+    def __init__(self):
+        self.notebook = Notebook()
+        self.choices = {
+        "1": self.show_notes,
+        "2": self.search_notes,
+        "3": self.add_note,
+        "4": self.modify_note,
+        "5": self.quit
+        }
+    def display_menu(self):
+        print("""
+        Notebook Menu
+        1. Show all Notes
+        2. Search Notes
+        3. Add Note
+        4. Modify Note
+        5. Quit
+        """)
+    def run(self):
+        '''Display the menu and respond to choices.'''
+        while True:
+            self.display_menu()
+            choice = input("Enter an option: ")
+            action = self.choices.get(choice)
+            if action:
+                action()
+            else:
+                print("{0} is not a valid choice".format(choice))
+    def show_notes(self, notes=None):
+        if not notes:
+            notes = self.notebook.notes
+        for note in notes:
+            print("{0}: {1}\n{2}".format(
+                note.id, note.tags, note.memo))
+    def search_notes(self):
+        filter = input("Search for: ")
+        notes = self.notebook.search(filter)
+        self.show_notes(notes)
+    def add_note(self):
+        memo = input("Enter a memo: ")
+        self.notebook.new_note(memo)
+        print("Your note has been added.")
+    def modify_note(self):
+        id = input("Enter a note id: ")
+        memo = input("Enter a memo: ")
+        tags = input("Enter tags: ")
+        if memo:
+            self.notebook.modify_memo(id, memo)
+        if tags:
+            self.notebook.modify_tags(id, tags)
+    def quit(self):
+        print("Thank you for using your notebook today.")
+        sys.exit(0)
 
 
-class Order:
-    '''
-    information about order
-    '''
-    def __init__(self, user_name, city, postoffice, items, number_ld):
-        '''
-        main atributes
-        '''
-        self.number_ld = number_ld
-        self.user_name = user_name
-        self.location = Location(city, postoffice)
-        self.items = items
-    def __str__(self):
-        '''
-        your order number
-        '''
-        return f"Your order number is {self.number_ld}"
-        
-    def calculateAmount(self, my_items):
-        '''
-        count total price
-        '''
-        self.total_price = 0
-        count = len(self.items)
-        for elem in range(count):
-            price = my_items[elem].price
-            self.total_price += price
-        return self.total_price
+class Note:
+    '''Represent a note in the notebook. Match against a
+    string in searches and store tags for each note.'''
+    def __init__(self, memo, tags=''):
+        '''initialize a note with memo and optional
+        space-separated tags. Automatically set the note's
+        creation date and a unique id.'''
+        self.memo = memo
+        self.tags = tags
+        self.creation_date = datetime.date.today()
+        global last_id
+        last_id += 1
+        self.id = last_id
+    def match(self, filter):
+        '''Determine if this note matches the filter
+        text. Return True if it matches, False otherwise.
 
-    def assignVehicle(self):
-        '''
-        assign vehicle
-        '''
-        if logSystem.vehicles:
-            logSystem.vehicles = logSystem.vehicles.pop(0)
-            return True
-        else:
-            return False
+        Search is case sensitive and matches both text and
+        tags.'''
+        return filter in self.memo or filter in self.tags
 
-class Location:
-    '''
-    information about location
-    '''
-    def __init__(self, city, postoffice):
-        '''
-        main atributes
-        '''
-        self.city = city
-        self.postoffice = postoffice
+class Notebook:
+    '''Represent a collection of notes that can be tagged,
+    modified, and searched.'''
+    def __init__(self):
+        '''Initialize a notebook with an empty list.'''
+        self.notes = []
+    def new_note(self, memo, tags=''):
+        '''Create a new note and add it to the list.'''
+        self.notes.append(Note(memo, tags))
+    def _find_note(self, note_id):
+        '''Locate the note with the given id.'''
+        for note in self.notes:
+            if note.id == note_id:
+                return note
+        return None
+    def modify_memo(self, note_id, memo):
+        '''Find the note with the given id and change its
+        memo to the given value.'''
+        self._find_note(note_id).memo = memo
+    def modify_tags(self, note_id, tags):
+        '''Find the note with the given id and change its
+        tags to the given value.'''
+        for note in self.notes:
+            if note.id == note_id:
+                note.tags = tags
+                break
+    def search(self, filter):
+        '''Find all notes that match the given filter
+        string.'''
+        return [note for note in self.notes if note.match(filter)]
 
-class Item:
-    '''
-    information about items
-    '''
-    def __init__(self, name, price):
-        '''
-        main atributes
-        '''
-        self.name = name
-        self.price = price
-    def __str__(self):
-        '''
-        your items
-        '''
-        return f'Your order:{self.name}, it costs: {self.price}'
-
-class Vehicle:
-    '''
-    information about vehicles
-    '''
-    def __init__(self, vehicleNo, isAvailable=True):
-        '''
-        main atributes
-        '''
-        self.vehicleNo = vehicleNo
-        self.isAvailable = isAvailable
-
-number_ld = 855488695
-vehicle_list = []
-# призначаємо змінній об'єкт класу, а саме список з двох машин
-vehicles = [Vehicle(1), Vehicle(2)]
-# пердаємо список об'єкту класа logisticsystem
-logSystem = LogisticSystem(vehicles)
-# список з предметів та їхньої ціни
-
-my_items = [Item('book',110), Item('chupachups',44)]
-my_order = Order(user_name='Oleg', city='Lviv', postoffice=53, items=my_items, number_ld = 855488695)
-info = logSystem.placeOrder(my_order)
-print(logSystem.trackOrder(my_order.number_ld, my_order, my_items))
-# "Your order #165488695 is sent to Lviv. Total price: 154 UAH."
-number_ld = 41241241
-my_items2 = [Item('flowers',11), Item('shoes',153), Item('helicopter',0.33)]
-my_order2 = Order('Andrii', 'Odessa', 3, my_items2, number_ld)
-print(my_order2.__str__())
-info = logSystem.placeOrder(my_order2)
-print(logSystem.trackOrder(my_order2.number_ld, my_order2, my_items2))
-
-number_ld = 485932990
-my_items3 = [Item('coat',61.8), Item('shower',5070), Item('rollers',700)]
-my_order3 = Order('Olesya', 'Kharkiv', 17, my_items3, number_ld)
-info = logSystem.placeOrder(my_order3)
-print(logSystem.trackOrder(my_order3.number_ld, my_order3, my_items3))
+n = Notebook()
+n.new_note("hello world")
+n.new_note("hello again")
+print(isinstance(n, Notebook))
+print(n.__dir__())
