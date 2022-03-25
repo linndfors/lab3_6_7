@@ -8,12 +8,20 @@ class LogisticSystem:
     def __init__(self, vehicles: list):
         '''
         main atributes
+        >>> vehicles = Vehicle(1)
+        >>> logSystem = LogisticSystem(vehicles)
+        >>> print(logSystem.vehicles.vehicleNo)
+        1
         '''
         self.vehicles = vehicles
         self.list_of_orders = [41241241, 4124351224, 855488695]
     def placeOrder(self, order):
         '''
         Check if vehicles are free
+        >>> my_items = [Item('book',110), Item('chupachups',44)]
+        >>> my_order = Order(user_name='Oleg', city='Lviv', postoffice=53, items=my_items, number_ld = 855488695)
+        >>> info = logSystem.placeOrder(my_order)
+        There is no available vehicles
         '''
         self.order = order
         numb_of_vehicles = len(self.vehicles)
@@ -26,6 +34,11 @@ class LogisticSystem:
     def trackOrder(self, orderld, order, my_items):
         '''
         return info about your order
+        >>> number_ld = 485932990
+        >>> my_items3 = [Item('coat',61.8), Item('shower',5070), Item('rollers',700)]
+        >>> my_order3 = Order('Olesya', 'Kharkiv', 17, my_items3, number_ld)
+        >>> print(logSystem.trackOrder(my_order3.number_ld, my_order3, my_items3))
+        No such order
         '''
         self.orderld = orderld
         if self.orderld not in self.list_of_orders:
@@ -41,6 +54,9 @@ class Order:
     def __init__(self, user_name, city, postoffice, items, number_ld):
         '''
         main atributes
+        >>> my_order2 = Order('Andrii', 'Odessa', 3, my_items2, number_ld)
+        >>> print(my_order2.user_name)
+        Andrii
         '''
         self.number_ld = number_ld
         self.user_name = user_name
@@ -49,12 +65,18 @@ class Order:
     def __str__(self):
         '''
         your order number
+        >>> my_order2 = Order('Andrii', 'Odessa', 3, my_items2, number_ld)
+        >>> print(my_order2)
+        Your order number is 485932990
         '''
         return f"Your order number is {self.number_ld}"
         
     def calculateAmount(self, my_items):
         '''
         count total price
+        >>> my_order2 = Order('Andrii', 'Odessa', 3, my_items2, number_ld)
+        >>> print(my_order2.calculateAmount(my_items2))
+        164.33
         '''
         self.total_price = 0
         count = len(self.items)
@@ -80,6 +102,9 @@ class Location:
     def __init__(self, city, postoffice):
         '''
         main atributes
+        >>> location = Location('Odessa', 3)
+        >>> print(location.city)
+        Odessa
         '''
         self.city = city
         self.postoffice = postoffice
@@ -91,12 +116,18 @@ class Item:
     def __init__(self, name, price):
         '''
         main atributes
+        >>> my_items = Item('book',110)
+        >>> print(my_items.name)
+        book
         '''
         self.name = name
         self.price = price
     def __str__(self):
         '''
         your items
+        >>> my_items = Item('book',110)
+        >>> print(my_items)
+        Your order:book, it costs: 110
         '''
         return f'Your order:{self.name}, it costs: {self.price}'
 
@@ -107,6 +138,9 @@ class Vehicle:
     def __init__(self, vehicleNo, isAvailable=True):
         '''
         main atributes
+        >>> car = Vehicle(1)
+        >>> print(car.vehicleNo)
+        1
         '''
         self.vehicleNo = vehicleNo
         self.isAvailable = isAvailable

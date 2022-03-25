@@ -5,7 +5,7 @@ last_id = 0
 class Menu:
     '''Display a menu and respond to choices when run.'''
     def __init__(self):
-        self.notebook = Notebook()
+        self.notebook = Notebook.notes
         self.choices = {
         "1": self.show_notes,
         "2": self.search_notes,
@@ -34,24 +34,27 @@ class Menu:
                 print("{0} is not a valid choice".format(choice))
     def show_notes(self, notes=None):
         if not notes:
-            notes = self.notebook.notes
+            notes = self.notebook
         for note in notes:
             print("{0}: {1}\n{2}".format(
                 note.id, note.tags, note.memo))
     def search_notes(self):
         filter = input("Search for: ")
-        notes = self.notebook.search(filter)
+        notes = Notebook().search(filter)
+        # notes = self.notebook.search(filter)
         self.show_notes(notes)
     def add_note(self):
         memo = input("Enter a memo: ")
-        self.notebook.new_note(memo)
+        Notebook().new_note(memo)
+        # self.notebook.new_note(memo)
         print("Your note has been added.")
     def modify_note(self):
         id = input("Enter a note id: ")
         memo = input("Enter a memo: ")
         tags = input("Enter tags: ")
         if memo:
-            self.notebook.modify_memo(id, memo)
+            Notebook().modify_memo(id, memo)
+            # self.notebook.modify_memo(id, memo)
         if tags:
             self.notebook.modify_tags(id, tags)
     def quit(self):
@@ -83,36 +86,40 @@ class Note:
 class Notebook:
     '''Represent a collection of notes that can be tagged,
     modified, and searched.'''
+    notes = []
     def __init__(self):
         '''Initialize a notebook with an empty list.'''
-        self.notes = []
     def new_note(self, memo, tags=''):
         '''Create a new note and add it to the list.'''
-        self.notes.append(Note(memo, tags))
+        Notebook.notes.append(Note(memo, tags))
     def _find_note(self, note_id):
         '''Locate the note with the given id.'''
-        for note in self.notes:
-            if note.id == note_id:
+        for note in Notebook.notes:
+            if str(note.id) == note_id:
                 return note
         return None
     def modify_memo(self, note_id, memo):
         '''Find the note with the given id and change its
         memo to the given value.'''
-        self._find_note(note_id).memo = memo
+        Notebook()._find_note(note_id).memo = memo
     def modify_tags(self, note_id, tags):
         '''Find the note with the given id and change its
         tags to the given value.'''
-        for note in self.notes:
+        for note in Notebook.notes:
             if note.id == note_id:
                 note.tags = tags
                 break
     def search(self, filter):
         '''Find all notes that match the given filter
         string.'''
-        return [note for note in self.notes if note.match(filter)]
+        return [note for note in Notebook.notes if note.match(filter)]
 
 n = Notebook()
 n.new_note("hello world")
 n.new_note("hello again")
-print(isinstance(n, Notebook))
-print(n.__dir__())
+print(Notebook())
+menu = Menu()
+menu.run()
+# print(n.search('hello')[0])
+isinstance(n, Notebook)
+# print(n.__dir__())
