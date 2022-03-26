@@ -114,12 +114,12 @@ class Notebook:
         string.'''
         return [note for note in Notebook.notes if note.match(filter)]
 
-n = Notebook()
-n.new_note("hello world")
-n.new_note("hello again")
-print(Notebook())
-menu = Menu()
-menu.run()
+# n = Notebook()
+# n.new_note("hello world")
+# n.new_note("hello again")
+# print(Notebook())
+# menu = Menu()
+# menu.run()
 # print(n.search('hello')[0])
-isinstance(n, Notebook)
+# isinstance(n, Notebook)
 # print(n.__dir__())
