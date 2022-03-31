@@ -51,12 +51,12 @@ class Menu:
     def modify_note(self):
         id = input("Enter a note id: ")
         memo = input("Enter a memo: ")
-        tags = input("Enter tags: ")
+#         tags = input("Enter tags: ")
         if memo:
             Notebook().modify_memo(id, memo)
             # self.notebook.modify_memo(id, memo)
-        if tags:
-            self.notebook.modify_tags(id, tags)
+#         if tags:
+#             self.notebook.modify_tags(id, tags)
     def quit(self):
         print("Thank you for using your notebook today.")
         sys.exit(0)
